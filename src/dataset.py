@@ -9,12 +9,15 @@ import os
 from datasets import load_dataset
 from src.utils import target_offset
 
+
 def load_data(args):
     if args.dataset == "dbpedia14":
-        dataset = load_dataset("csv", column_names=["label", "title", "sentence"],
-                                data_files={"train": os.path.join(args.data_folder, "dbpedia_csv/train.csv"),
-                                            "validation": os.path.join(args.data_folder, "dbpedia_csv/test.csv")})
-        dataset = dataset.map(target_offset, batched=True)
+        # dataset = load_dataset("csv", column_names=["label", "title", "sentence"],
+        #                         data_files={"train": os.path.join(args.data_folder, "dbpedia_csv/train.csv"),
+        #                                     "validation": os.path.join(args.data_folder, "dbpedia_csv/test.csv")})
+        dataset = load_dataset("dbpedia_14")
+        dataset = dataset.rename_column("content", "sentence")
+        # dataset = dataset.map(target_offset, batched=True)
         num_labels = 14
     elif args.dataset == "ag_news":
         dataset = load_dataset("ag_news")
@@ -29,7 +32,5 @@ def load_data(args):
         dataset = load_dataset("glue", "mnli")
         num_labels = 3
     dataset = dataset.shuffle(seed=0)
-    
-    
 
     return dataset, num_labels
